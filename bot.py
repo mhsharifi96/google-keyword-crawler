@@ -57,6 +57,7 @@ async def main(event):
         res = g_main(search_val=keyword,rec_search_dir=file_name) 
         # print(res)
         await client.send_file(event.message.peer_id.user_id, res)
+        #TODO:  remove file after send
         
     print(sum(1 for _ in  re.finditer(regex_lsi, client_message, re.MULTILINE)))
     # # "me" is a user object. You can pretty-print
