@@ -18,9 +18,14 @@ async def main(event):
     client_message = event.message.message
 
     if(client_message == "/start")  : 
-        text = """
+        text1 = """
   به بات a28 خوش امدید.
 جهت یافتن related word بر روی /related کلیک نمایید. 
+جهت یافتن lsi ها بر روی /lsi کلیک نمایید.
+        کلیک کنید
+        """
+        text = """
+  به بات a28 خوش امدید.
 جهت یافتن lsi ها بر روی /lsi کلیک نمایید.
         کلیک کنید
         """
@@ -58,6 +63,9 @@ async def main(event):
         # print(res)
         await client.send_file(event.message.peer_id.user_id, res)
         #TODO:  remove file after send
+        message = await client.send_message(
+            event.message.peer_id.user_id,"ممنونم از همراهیتون :)",
+            link_preview=False)
         
     print(sum(1 for _ in  re.finditer(regex_lsi, client_message, re.MULTILINE)))
     # # "me" is a user object. You can pretty-print
@@ -85,10 +93,7 @@ async def main(event):
     # await client.send_message('username', 'Testing Telethon!')
 
     # You can, of course, use markdown in your messages:
-    message = await client.send_message(
-        event.message.peer_id.user_id,"ممنونم از همراهیتون :)",
-        link_preview=False
-    )
+    
 
     # Sending a message returns the sent message object, which you can use
     # print(message.raw_text)
