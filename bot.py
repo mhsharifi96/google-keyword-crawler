@@ -38,7 +38,7 @@ async def main(event):
     
     if(client_message == "/lsi"):
         text = """عبارت کلیدی خود را به صورت زیر تایپ کنید :
-        key: دجیتال مارکتینگ
+        key: دیجیتال مارکتینگ
         """
         message = await client.send_message(
             event.message.peer_id.user_id,
