@@ -76,8 +76,17 @@ async def main(event):
             "ممکنه چند دقیقه طول بکشه،صبور باشید!\n تموم که شد یه فایل براتون اینجا ارسال میشه .",
             link_preview=False
             )
-        file_name = str(int(time.time()))+"_a28_ir.txt"
-        res = g_main(search_val=keyword,rec_search_dir=file_name) 
+        rec_file_name = 'rec'+str(int(time.time()))+"_a28_ir.txt"
+        rel_file_name = 'rel'+str(int(time.time()))+"_a28_ir.txt"
+
+        res_rec,res_rel = g_main(search_val=keyword,rec_search_dir=file_name) 
+        with open(rec_file_name, 'w') as outfile:
+            with open(rel_file_name) as infile:
+                for line in infile:
+                    outfile.write(line)
+                infile.close()
+            outfile.close
+
         # print(res)
         await client.send_file(event.message.peer_id.user_id, res)
         #TODO:  remove file after send
