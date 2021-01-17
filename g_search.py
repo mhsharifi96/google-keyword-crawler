@@ -17,10 +17,11 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
-Author: Michael Spencer
-Email: mwspencer75@gmail.com
-Twitter: 
-Version 9.2
+
+First Author: Michael Spencer Email: mwspencer75@gmail.com
+Second Author :Mohammad Hossein sharifi Email : mh.sh7676@gmail.com
+
+version :1.0.1
 '''
 
 #Starting Messing with this Version, Version 9 is the robust one
@@ -41,7 +42,7 @@ import time
 # url = 'https://www.google.com/search?q=What+are+the+best+tools+for+finding+Instagram+influencers&rlz=1C1CHFX_enUS601US601&oq=What+are+the+best+tools+for+finding+Instagram+influencers&aqs=chrome..69i57.24849j0j7&sourceid=chrome&ie=UTF-8'
 url = 'https://www.google.com/search?q=%D9%81%D8%B1%D9%88%D8%B4+%DA%86%D8%B1%D8%AE+%D8%AE%DB%8C%D8%A7%D8%B7%DB%8C&oq=%D9%81%D8%B1%D9%88%D8%B4+%DA%86%D8%B1%D8%AE+%D8%AE%DB%8C%D8%A7&aqs=chrome.0.0i19l2j69i57j0i19l5.6343j0j7&sourceid=chrome&ie=UTF-8'
 
-rel_search_dir = "Related_Results.txt" #enter path to new text file here
+rel_link_search_dir = "Related_Results.txt" #enter path to new text file here
 rec_search_dir = "Recommended_Results.txt"
 rel_parse_dir = "Related_Parsed.txt"
 rec_parse_dir = "Recommended_Parsed.txt"
@@ -49,9 +50,9 @@ rec_parse_dir = "Recommended_Parsed.txt"
 search_val = "فروش چرخ خیاطی"
 
 chrome_options = Options()
-chrome_options.add_argument('--headless')
-chrome_options.add_argument('--no-sandbox')
-chrome_options.add_argument('--disable-dev-shm-usage')
+# chrome_options.add_argument('--headless')
+# chrome_options.add_argument('--no-sandbox')
+# chrome_options.add_argument('--disable-dev-shm-usage')
 
 def get_related_search(url):
     """Creates a list of href from the class _e4d"""
@@ -60,12 +61,12 @@ def get_related_search(url):
     driver.get(url)
     soup = BeautifulSoup(driver.page_source, "lxml")
     links = soup.select("p.nVcaUb a[href]") 
-    related_search = soup.select("p.nVcaUb a span") 
+    raw_related_search = soup.select("p.nVcaUb a span") 
 
     for link in links: 
         rel_link = link['href']
-        rel_link = str(rel_link)
-        rel_links.append(rel_link)
+        rel_links.append(str(rel_link))
+    related_search = [rel.get_text() for rel in raw_related_search]
     driver.close()
     return rel_links ,related_search
     
@@ -140,10 +141,11 @@ def create_csv(counts_dict):
             writer.writerow([key, value])
     csv_file.close()
     
-# def main(url, rel_search_dir, rec_search_dir, rel_parse_dir, search_val, numTime):
-def main(rel_search_dir="Related_Results.txt", rec_search_dir="Recommended_Results.txt",rel_parse_dir="Related_Parsed.txt", search_val="a28", numTime=1):
+# def main(url, rel_link_search_dir, rec_search_dir, rel_parse_dir, search_val, numTime):
+def main(rel_link_search_dir="Related_Results.txt", rec_search_dir="Recommended_Results.txt",rel_word_search_dir="related_search.txt",\
+    rel_parse_dir="Related_Parsed.txt", search_val="a28", numTime=1):
     #url: url to search
-    #rel_search_dir: directory to save related search text file
+    #rel_link_search_dir: directory to save related search text file
     #rec_search_dir: directory to save recommeded text file 
     #numTime: number of times to search
     i = numTime
@@ -168,10 +170,10 @@ def main(rel_search_dir="Related_Results.txt", rec_search_dir="Recommended_Resul
         # url = "https://www.google.com/search?q={}".format(parse.quote(search_val))
         rel_links,related_search = get_related_search(url)
         print("rel link : ",rel_links)
-        write_to_file(rel_search_dir, rel_links)
+        write_to_file(rel_link_search_dir, rel_links)
         print(type(related_search))
         print(type(related_search)=='bs4.element.ResultSet')
-        write_to_file('related_search.txt', related_search)
+        write_to_file(rel_word_search_dir, related_search)
         # for rel in rel_links : 
         #     print(rel)
         #     print(type(rel))
@@ -180,7 +182,7 @@ def main(rel_search_dir="Related_Results.txt", rec_search_dir="Recommended_Resul
         
         
     # print("Working on parsing data to text.")
-    # data_rel = parse_data(rel_search_dir, rel_parse_dir)
+    # data_rel = parse_data(rel_link_search_dir, rel_parse_dir)
     # #data_rec = 
     # print("Working on dictionary")
     # dict_count = get_count(data_rel)
@@ -188,9 +190,9 @@ def main(rel_search_dir="Related_Results.txt", rec_search_dir="Recommended_Resul
     # print("Now creating csv of counts")
     # create_csv(dict_count)
     # print("All done!  Check out the results in whichever folder you ran this script.")        
-    return rec_search_dir
-# main(url, rel_search_dir, rec_search_dir, rel_parse_dir, search_val, 1)
-# main(rel_search_dir, rec_search_dir, rel_parse_dir, search_val, 1)
+    return rec_search_dir,rel_word_search_dir
+# main(url, rel_link_search_dir, rec_search_dir, rel_parse_dir, search_val, 1)
+# main(rel_link_search_dir, rec_search_dir, rel_parse_dir, search_val, 1)
 
 main(search_val="وحید شکری")
 
