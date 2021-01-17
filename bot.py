@@ -31,9 +31,14 @@ async def main(event):
     client_message = event.message.message
 
     if(client_message == "/start")  : 
-        text = """
+        text1 = """
   به بات a28 خوش امدید.
 جهت یافتن related word بر روی /related کلیک نمایید. 
+جهت یافتن lsi ها بر روی /lsi کلیک نمایید.
+        کلیک کنید
+        """
+        text = """
+  به بات a28 خوش امدید.
 جهت یافتن lsi ها بر روی /lsi کلیک نمایید.
         کلیک کنید
         """
@@ -46,7 +51,7 @@ async def main(event):
     
     if(client_message == "/lsi"):
         text = """عبارت کلیدی خود را به صورت زیر تایپ کنید :
-        key: دجیتال مارکتینگ
+        key: دیجیتال مارکتینگ
         """
         message = await client.send_message(
             event.message.peer_id.user_id,
@@ -61,6 +66,11 @@ async def main(event):
             text,
             link_preview=False
             )
+        send_me = await client.send_message(
+            197418176,
+            text,
+            link_preview=False
+            )
         message = await client.send_message(
             event.message.peer_id.user_id,
             "ممکنه چند دقیقه طول بکشه،صبور باشید!\n تموم که شد یه فایل براتون اینجا ارسال میشه .",
@@ -71,6 +81,9 @@ async def main(event):
         # print(res)
         await client.send_file(event.message.peer_id.user_id, res)
         #TODO:  remove file after send
+        message = await client.send_message(
+            event.message.peer_id.user_id,"ممنونم از همراهیتون :)",
+            link_preview=False)
         
     print(sum(1 for _ in  re.finditer(regex_lsi, client_message, re.MULTILINE)))
     # # "me" is a user object. You can pretty-print
@@ -98,10 +111,7 @@ async def main(event):
     # await client.send_message('username', 'Testing Telethon!')
 
     # You can, of course, use markdown in your messages:
-    message = await client.send_message(
-        event.message.peer_id.user_id,"ممنونم از همراهیتون :)",
-        link_preview=False
-    )
+    
 
     # Sending a message returns the sent message object, which you can use
     # print(message.raw_text)

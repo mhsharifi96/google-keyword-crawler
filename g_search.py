@@ -34,6 +34,7 @@ Version 9.2
 
 from bs4 import BeautifulSoup
 from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
 import unicodecsv as csv
 from urllib import parse
 import time
@@ -47,10 +48,15 @@ rec_parse_dir = "Recommended_Parsed.txt"
 # search_val = "How to get more instagram followers"
 search_val = "فروش چرخ خیاطی"
 
+chrome_options = Options()
+chrome_options.add_argument('--headless')
+chrome_options.add_argument('--no-sandbox')
+chrome_options.add_argument('--disable-dev-shm-usage')
+
 def get_related_search(url):
     """Creates a list of href from the class _e4d"""
     rel_links = [] 
-    driver = webdriver.Chrome('./chromedriver') 
+    driver = webdriver.Chrome('./chromedriver',chrome_options=chrome_options) 
     driver.get(url)
     soup = BeautifulSoup(driver.page_source, "lxml")
     links = soup.select("p.nVcaUb a[href]") 
@@ -66,7 +72,7 @@ def get_related_search(url):
 def get_recommended_search(url, search_val):
     """Creates a list of recommended searches"""
     reco_words = []
-    driver = webdriver.Chrome('./chromedriver') 
+    driver = webdriver.Chrome('./chromedriver',chrome_options=chrome_options) 
     driver.get("http:\\www.google.com")
     search = driver.find_element_by_name('q')
     search.send_keys(search_val)
