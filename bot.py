@@ -2,10 +2,23 @@ from telethon import TelegramClient, events
 import  re
 from g_search import main as g_main
 import  time
+import config
+
 # Remember to use your own values from my.telegram.org!
-api_id = 281931
-api_hash = '2536e06ebbf8c63edc74aa4a0f7c062e'
-bot_token = "970347099:AAG3f5Mgaa1QRbMxg-tNeKmFT1dnT3_Cm_o"
+
+# Reading Configs
+config = configparser.ConfigParser()
+config.read("config.ini")
+
+
+# api_id = 281931
+# api_hash = '2536e06ebbf8c63edc74aa4a0f7c062e'
+# bot_token = "970347099:AAG3f5Mgaa1QRbMxg-tNeKmFT1dnT3_Cm_o"
+
+api_id = config['Telegram']['api_id']
+api_hash = config['Telegram']['api_hash']
+bot_token = config['Telegram']['bot_token']
+
 client =  TelegramClient('bot', api_id, api_hash)
 regex_lsi = r"key\s?:\s?"
 

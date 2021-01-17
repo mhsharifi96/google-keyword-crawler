@@ -35,6 +35,7 @@ Version 9.2
 from bs4 import BeautifulSoup
 from selenium import webdriver
 import unicodecsv as csv
+from urllib import parse
 import time
 # url = 'https://www.google.com/search?q=What+are+the+best+tools+for+finding+Instagram+influencers&rlz=1C1CHFX_enUS601US601&oq=What+are+the+best+tools+for+finding+Instagram+influencers&aqs=chrome..69i57.24849j0j7&sourceid=chrome&ie=UTF-8'
 url = 'https://www.google.com/search?q=%D9%81%D8%B1%D9%88%D8%B4+%DA%86%D8%B1%D8%AE+%D8%AE%DB%8C%D8%A7%D8%B7%DB%8C&oq=%D9%81%D8%B1%D9%88%D8%B4+%DA%86%D8%B1%D8%AE+%D8%AE%DB%8C%D8%A7&aqs=chrome.0.0i19l2j69i57j0i19l5.6343j0j7&sourceid=chrome&ie=UTF-8'
@@ -53,13 +54,14 @@ def get_related_search(url):
     driver.get(url)
     soup = BeautifulSoup(driver.page_source, "lxml")
     links = soup.select("p.nVcaUb a[href]") 
-    
+    related_search = soup.select("p.nVcaUb a span") 
+
     for link in links: 
         rel_link = link['href']
         rel_link = str(rel_link)
         rel_links.append(rel_link)
     driver.close()
-    return rel_links
+    return rel_links ,related_search
     
 def get_recommended_search(url, search_val):
     """Creates a list of recommended searches"""
@@ -71,12 +73,12 @@ def get_recommended_search(url, search_val):
     time.sleep(8)
     soup = BeautifulSoup(driver.page_source, "lxml")
     recommendations = soup.select("div.sbl1 span")
+    
     for reco in recommendations:
         reco_word = reco
         # reco_words.append(search_val + reco_word.get_text())
         reco_words.append(reco_word.get_text())
     driver.close()
-    print(reco_words)
     return reco_words
     
         
@@ -86,9 +88,16 @@ def write_to_file(dir, results):
     """writes file to directory"""
     for res in results:
         with open(dir, "a") as f:
-            f.write(res + "\n") 
+            f.write(str(res) + "\n") 
         f.close()
 
+
+def read_on_file(dir) :
+    """read file to directory"""
+    with open(dir, "r") as f:
+        content = f.readlines()
+        f.close()
+    return content
 
 def parse_data(fname, dir):
     """Parses the google searches, then creates a list of the words"""
@@ -127,48 +136,57 @@ def create_csv(counts_dict):
     
 # def main(url, rel_search_dir, rec_search_dir, rel_parse_dir, search_val, numTime):
 def main(rel_search_dir="Related_Results.txt", rec_search_dir="Recommended_Results.txt",rel_parse_dir="Related_Parsed.txt", search_val="a28", numTime=1):
-    #url: url to seach
+    #url: url to search
     #rel_search_dir: directory to save related search text file
     #rec_search_dir: directory to save recommeded text file 
     #numTime: number of times to search
     i = numTime
     j = numTime
-    
-    # print("Working on related searches")
-    # for x in range(i):
-    #     rel_links = get_related_search(url)
-    #     print("rel link : ",rel_links)
-    #     write_to_file(rel_search_dir, rel_links)
-       
-    #     url = 'https://www.google.com' + rel_links[0]
-    
-
+  
     print("Working on recommendation")
     for x in range(j):
         
         reco_words = get_recommended_search('http://www.google.com', search_val)
         write_to_file(rec_search_dir, reco_words)
-        for rec in reco_words :
-            # print("{:::::::::::::::::",rec)
-            new_reco_words = get_recommended_search('http://www.google.com', rec)
-            write_to_file(rec_search_dir, new_reco_words)
+        # for rec in reco_words :
+        #     # print("{:::::::::::::::::",rec)
+        #     new_reco_words = get_recommended_search('http://www.google.com', rec)
+        #     write_to_file(rec_search_dir, new_reco_words)
+
+    print("Working on related searches")
+    lines = read_on_file(rec_search_dir)
+    
+    for line in lines:
+        url = "https://www.google.com/search?safe=active&sxsrf=ALeKk01d-O0nbkFoi9zNeShPD3b9Iw2Uow%3A1610656302142&ei=LqoAYNCXCJC-a763gvgM&q={}&gs_ssp=eJzj4tTP1TcwyzCptDRg9BK4ue_Gxhubb-672XGz5XbPjc0AsmgPEA&oq=%D9%BE%D8%B1&gs_lcp=CgZwc3ktYWIQAxgBMgQIIxAnMgUILhDJAzICCAAyAggAMgIILjICCC4yAgguMgIIADICCAAyAggAOgQIABBHOgUIABDJAzoICC4QxwEQrwE6BwgAEMkDEB46BAgAEB5Q7ipYu0Vg81FoAnAEeACAAbICiAH_CJIBBTItMy4xmAEAoAEBqgEHZ3dzLXdpesgBCMABAQ&sclient=psy-ab".\
+            format(parse.quote(line))
+        # url = "https://www.google.com/search?q={}".format(parse.quote(search_val))
+        rel_links,related_search = get_related_search(url)
+        print("rel link : ",rel_links)
+        write_to_file(rel_search_dir, rel_links)
+        print(type(related_search))
+        print(type(related_search)=='bs4.element.ResultSet')
+        write_to_file('related_search.txt', related_search)
+        # for rel in rel_links : 
+        #     print(rel)
+        #     print(type(rel))
+        #     # url = 'https://www.google.com' + rel
+        #     # print('url',url)
         
         
-        
-    print("Working on parsing data to text.")
-    data_rel = parse_data(rel_search_dir, rel_parse_dir)
-    #data_rec = 
-    print("Working on dictionary")
-    dict_count = get_count(data_rel)
-    print("These are the counts: ", dict_count)
-    print("Now creating csv of counts")
-    create_csv(dict_count)
-    print("All done!  Check out the results in whichever folder you ran this script.")        
+    # print("Working on parsing data to text.")
+    # data_rel = parse_data(rel_search_dir, rel_parse_dir)
+    # #data_rec = 
+    # print("Working on dictionary")
+    # dict_count = get_count(data_rel)
+    # print("These are the counts: ", dict_count)
+    # print("Now creating csv of counts")
+    # create_csv(dict_count)
+    # print("All done!  Check out the results in whichever folder you ran this script.")        
     return rec_search_dir
 # main(url, rel_search_dir, rec_search_dir, rel_parse_dir, search_val, 1)
 # main(rel_search_dir, rec_search_dir, rel_parse_dir, search_val, 1)
 
-# main(search_val="دیجیتال مارکتینگ")
+main(search_val="وحید شکری")
 
 
 
