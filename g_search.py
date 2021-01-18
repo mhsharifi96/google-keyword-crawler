@@ -23,6 +23,10 @@ Second Author :Mohammad Hossein sharifi Email : mh.sh7676@gmail.com
 
 version :1.0.1
 '''
+import logging
+logging.basicConfig(level=logging.DEBUG)
+# For instance, show only warnings and above
+logging.getLogger('telethon').setLevel(level=logging.WARNING)
 
 #Starting Messing with this Version, Version 9 is the robust one
 
@@ -40,8 +44,7 @@ import unicodecsv as csv
 from urllib import parse
 import time
 # url = 'https://www.google.com/search?q=What+are+the+best+tools+for+finding+Instagram+influencers&rlz=1C1CHFX_enUS601US601&oq=What+are+the+best+tools+for+finding+Instagram+influencers&aqs=chrome..69i57.24849j0j7&sourceid=chrome&ie=UTF-8'
-url = 'https://www.google.com/search?q=%D9%81%D8%B1%D9%88%D8%B4+%DA%86%D8%B1%D8%AE+%D8%AE%DB%8C%D8%A7%D8%B7%DB%8C&oq=%D9%81%D8%B1%D9%88%D8%B4+%DA%86%D8%B1%D8%AE+%D8%AE%DB%8C%D8%A7&aqs=chrome.0.0i19l2j69i57j0i19l5.6343j0j7&sourceid=chrome&ie=UTF-8'
-
+url = 'https://www.google.com/search?q=%D9%81%D8%B1%D9%88%D8%B4+%DA%86%D8%B1%D8%AE+%D8%AE%DB%8C%D8%A7%D8%B7%DB%8C&oq=%D9%81%D8%B1%D9%88%D8%B4+%DA%86%D8%B1%D8%AE+%D8%AE%DB%8C%D8%A7&aqs=chrome.0.0i19l2j69i57j0i19l5.6343j0j7&sourceid=chrome&ie=UTF-8' 
 rel_link_search_dir = "Related_Results.txt" #enter path to new text file here
 rec_search_dir = "Recommended_Results.txt"
 rel_parse_dir = "Related_Parsed.txt"
@@ -61,12 +64,14 @@ def get_related_search(url):
     driver.get(url)
     soup = BeautifulSoup(driver.page_source, "lxml")
     links = soup.select("p.nVcaUb a[href]") 
-    raw_related_search = soup.select("p.nVcaUb a span") 
+    raw_related_search = soup.select("p.nVcaUb") 
 
     for link in links: 
         rel_link = link['href']
         rel_links.append(str(rel_link))
+    print('raw_related_search',raw_related_search)
     related_search = [rel.get_text() for rel in raw_related_search]
+    time.sleep(10)
     driver.close()
     return rel_links ,related_search
     
@@ -94,7 +99,7 @@ def get_recommended_search(url, search_val):
 def write_to_file(dir, results):
     """writes file to directory"""
     for res in results:
-        with open(dir, "a") as f:
+        with open(dir, "a+") as f:
             f.write(str(res) + "\n") 
         f.close()
 
@@ -156,24 +161,24 @@ def main(rel_link_search_dir="Related_Results.txt", rec_search_dir="Recommended_
         
         reco_words = get_recommended_search('http://www.google.com', search_val)
         write_to_file(rec_search_dir, reco_words)
-        # for rec in reco_words :
-        #     # print("{:::::::::::::::::",rec)
-        #     new_reco_words = get_recommended_search('http://www.google.com', rec)
-        #     write_to_file(rec_search_dir, new_reco_words)
+        for rec in reco_words :
+            # print("{:::::::::::::::::",rec)
+            new_reco_words = get_recommended_search('http://www.google.com', rec)
+            write_to_file(rec_search_dir, new_reco_words)
 
     print("Working on related searches")
     lines = read_on_file(rec_search_dir)
-    
     for line in lines:
-        url = "https://www.google.com/search?safe=active&sxsrf=ALeKk01d-O0nbkFoi9zNeShPD3b9Iw2Uow%3A1610656302142&ei=LqoAYNCXCJC-a763gvgM&q={}&gs_ssp=eJzj4tTP1TcwyzCptDRg9BK4ue_Gxhubb-672XGz5XbPjc0AsmgPEA&oq=%D9%BE%D8%B1&gs_lcp=CgZwc3ktYWIQAxgBMgQIIxAnMgUILhDJAzICCAAyAggAMgIILjICCC4yAgguMgIIADICCAAyAggAOgQIABBHOgUIABDJAzoICC4QxwEQrwE6BwgAEMkDEB46BAgAEB5Q7ipYu0Vg81FoAnAEeACAAbICiAH_CJIBBTItMy4xmAEAoAEBqgEHZ3dzLXdpesgBCMABAQ&sclient=psy-ab".\
+        # url = "https://www.google.com/search?safe=active&sxsrf=ALeKk01d-O0nbkFoi9zNeShPD3b9Iw2Uow%3A1610656302142&ei=LqoAYNCXCJC-a763gvgM&q={}&gs_ssp=eJzj4tTP1TcwyzCptDRg9BK4ue_Gxhubb-672XGz5XbPjc0AsmgPEA&oq=%D9%BE%D8%B1&gs_lcp=CgZwc3ktYWIQAxgBMgQIIxAnMgUILhDJAzICCAAyAggAMgIILjICCC4yAgguMgIIADICCAAyAggAOgQIABBHOgUIABDJAzoICC4QxwEQrwE6BwgAEMkDEB46BAgAEB5Q7ipYu0Vg81FoAnAEeACAAbICiAH_CJIBBTItMy4xmAEAoAEBqgEHZ3dzLXdpesgBCMABAQ&sclient=psy-ab".\
+        #     format(parse.quote(line))
+        url = "https://www.google.com/search?safe=active&sxsrf=ALeKk01x2LZBMXWOon6LOxxCugYckJYDTA%3A1611005226515&source=hp&ei=Kv0FYPmRHYrWap6yu-AE&q={}&gs_lcp=CgZwc3ktYWIQAzIHCCMQyQMQJzIFCAAQywEyBQgAEMsBMgUIABDLATIFCAAQywEyBQgAEMsBMgUIABDLATIFCAAQywEyBQgAEMsBMgUIABDLAToICAAQyQMQkQI6BQgAEJECOgQIABBDOgIIADoHCCMQ6gIQJzoECCMQJzoECC4QJzoFCAAQyQM6CwguEMcBEK8BEMsBUAZYjTBg1DJoA3AAeAGAAfUDiAHvL5IBCTItNy45LjIuMZgBAKABAaoBB2d3cy13aXqwAQo&sclient=psy-ab&ved=0ahUKEwj5zoWStqbuAhUKqxoKHR7ZDkwQ4dUDCAc&uact=5&hl=fa".\
             format(parse.quote(line))
         # url = "https://www.google.com/search?q={}".format(parse.quote(search_val))
         rel_links,related_search = get_related_search(url)
-        print("rel link : ",rel_links)
+        print(" related_search : ",related_search)
         write_to_file(rel_link_search_dir, rel_links)
-        print(type(related_search))
-        print(type(related_search)=='bs4.element.ResultSet')
         write_to_file(rel_word_search_dir, related_search)
+        # break
         # for rel in rel_links : 
         #     print(rel)
         #     print(type(rel))
@@ -194,11 +199,14 @@ def main(rel_link_search_dir="Related_Results.txt", rec_search_dir="Recommended_
 # main(url, rel_link_search_dir, rec_search_dir, rel_parse_dir, search_val, 1)
 # main(rel_link_search_dir, rec_search_dir, rel_parse_dir, search_val, 1)
 
-main(search_val="وحید شکری")
+# main(search_val="وحید شکری")
 
 
+# import time
 
+# rec_file_name = 'rec'+str(int(time.time()))+"_a28_ir.txt"
+# rel_file_name = 'rel'+str(int(time.time()))+"_a28_ir.txt"
 
-
+# res_rec,res_rel = main(search_val='keyword',rec_search_dir=rec_file_name,rel_word_search_dir=rel_file_name) 
 
 

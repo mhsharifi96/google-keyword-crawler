@@ -14,7 +14,7 @@ def wordcloud_conventor(fileLocation='related_search.txt'):
 
     # Read the whole text.
     # f = codecs.open(os.path.join(d, 'Recommended_Results.txt'), 'r', 'utf-8')
-    f = codecs.open(os.path.join(d, 'related_search.txt'), 'r', 'utf-8')
+    f = codecs.open(os.path.join(d, fileLocation), 'r', 'utf-8')
 
     # Make text readable for a non-Arabic library like wordcloud
     text = arabic_reshaper.reshape(f.read())
@@ -24,6 +24,8 @@ def wordcloud_conventor(fileLocation='related_search.txt'):
     wordcloud = WordCloud(font_path='iran/Vazir-Light.ttf', width=1000, height=860, margin=2,max_words=1000).generate(text)
 
     # Export to an image
-    res = wordcloud.to_file(str(randrange(100))+".png")
+    wordcloudFileName = str(randrange(100))+".png"
+    res = wordcloud.to_file(wordcloudFileName)
+    return wordcloudFileName
 
-wordcloud_conventor()
+# wordcloud_conventor()

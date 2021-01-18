@@ -2,8 +2,8 @@ from telethon import TelegramClient, events
 import  re
 from g_search import main as g_main
 import  time
-import config
-
+import configparser
+from wordcloud_conventor import wordcloud_conventor
 # Remember to use your own values from my.telegram.org!
 
 # Reading Configs
@@ -79,16 +79,19 @@ async def main(event):
         rec_file_name = 'rec'+str(int(time.time()))+"_a28_ir.txt"
         rel_file_name = 'rel'+str(int(time.time()))+"_a28_ir.txt"
 
-        res_rec,res_rel = g_main(search_val=keyword,rec_search_dir=file_name) 
-        with open(rec_file_name, 'w') as outfile:
+        res_rec,res_rel = g_main(search_val=keyword,rec_search_dir=rec_file_name,rel_word_search_dir=rel_file_name) 
+        # TODO : check rel_file_name sometime not avaiable
+        with open(rec_file_name, 'a') as outfile:
             with open(rel_file_name) as infile:
                 for line in infile:
                     outfile.write(line)
-                infile.close()
+            #     infile.close()
             outfile.close
 
         # print(res)
-        await client.send_file(event.message.peer_id.user_id, res)
+        await client.send_file(event.message.peer_id.user_id, rec_file_name)
+        wordcloudFileName = wordcloud_conventor(fileLocation=rec_file_name)
+        await client.send_file(event.message.peer_id.user_id, wordcloudFileName)
         #TODO:  remove file after send
         message = await client.send_message(
             event.message.peer_id.user_id,"ممنونم از همراهیتون :)",
