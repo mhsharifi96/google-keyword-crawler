@@ -1,4 +1,5 @@
 # Byte-compiled / optimized / DLL files
+bot.session
 __pycache__/
 *.py[cod]
 *$py.class
@@ -140,3 +141,4 @@ cython_debug/
 
 config.ini
 bot.session
+
