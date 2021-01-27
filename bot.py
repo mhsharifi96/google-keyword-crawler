@@ -4,6 +4,7 @@ from g_search import main as g_main
 import  time
 import configparser
 from wordcloud_conventor import wordcloud_conventor
+import os.path
 # Remember to use your own values from my.telegram.org!
 
 # Reading Configs
@@ -25,40 +26,26 @@ regex_lsi = r"key\s?:\s?"
 @client.on(events.NewMessage)
 async def main(event):
     print("event handel")
-    print(event.message.message)
+    print(event)
     print(event.message.peer_id.user_id)
     # Getting information about yourself
     client_message = event.message.message
 
     if(client_message == "/start")  : 
-        text1 = """
-  به بات a28 خوش امدید.
-جهت یافتن related word بر روی /related کلیک نمایید. 
-جهت یافتن lsi ها بر روی /lsi کلیک نمایید.
-        کلیک کنید
-        """
-        text = """
-  به بات a28 خوش امدید.
-جهت یافتن lsi ها بر روی /lsi کلیک نمایید.
-        کلیک کنید
-        """
+        text = """به بات **a28** خوش امدید.
+        هدف این بات سهولت در پیداکردن کلمه کلیدی در هنگام سئو سایت هست.
+        
+        
+        فقط کافیه کلمه کلیدی خودتو سرچ کنی. تا یه لیستی بلند بالا به همراه ابرکلمه اون دریافت کنید.
+        **فقط حواستون باشه کلمه کلیدی باید بیش از سه حرف باشد.**"""
         sapmple ='This message has **bold**, `code`, __italics__ and ''a [nice website](https://example.com)!'
         message = await client.send_message(
             event.message.peer_id.user_id,
             text,
             link_preview=False
             )
-    
-    if(client_message == "/lsi"):
-        text = """عبارت کلیدی خود را به صورت زیر تایپ کنید :
-        key: دیجیتال مارکتینگ
-        """
-        message = await client.send_message(
-            event.message.peer_id.user_id,
-            text,
-            link_preview=False
-            )
-    if(sum(1 for _ in  re.finditer(regex_lsi, client_message, re.MULTILINE))>0):
+    # sum(1 for _ in  re.finditer(regex_lsi, client_message, re.MULTILINE))>0
+    if len(client_message)>=3:
         keyword = re.sub(regex_lsi,"",client_message)
         text = """کلمه کلیدی شما : {}""".format(keyword)
         message = await client.send_message(
@@ -81,12 +68,13 @@ async def main(event):
 
         res_rec,res_rel = g_main(search_val=keyword,rec_search_dir=rec_file_name,rel_word_search_dir=rel_file_name) 
         # TODO : check rel_file_name sometime not avaiable
-        with open(rec_file_name, 'a') as outfile:
-            with open(rel_file_name) as infile:
-                for line in infile:
-                    outfile.write(line)
-            #     infile.close()
-            outfile.close
+        if os.path.isfile(rel_file_name):
+            with open(rec_file_name, 'a') as outfile:
+                with open(rel_file_name) as infile:
+                    for line in infile:
+                        outfile.write(line)
+                #     infile.close()
+                outfile.close
 
         # print(res)
         await client.send_file(event.message.peer_id.user_id, rec_file_name)
@@ -96,8 +84,14 @@ async def main(event):
         message = await client.send_message(
             event.message.peer_id.user_id,"ممنونم از همراهیتون :)",
             link_preview=False)
-        
-    print(sum(1 for _ in  re.finditer(regex_lsi, client_message, re.MULTILINE)))
+    else :
+        message = await client.send_message(
+            event.message.peer_id.user_id,
+            ':/ میشه بیش از سه حرف برامون تایپ کنی ! آخه خیلی کمه ',
+            link_preview=False
+            )
+
+    # print(sum(1 for _ in  re.finditer(regex_lsi, client_message, re.MULTILINE)))
     # # "me" is a user object. You can pretty-print
     # # any Telegram object with the "stringify" method:
     # print(me.stringify())

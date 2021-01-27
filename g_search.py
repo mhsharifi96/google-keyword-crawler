@@ -71,7 +71,7 @@ def get_related_search(url):
         rel_links.append(str(rel_link))
     print('raw_related_search',raw_related_search)
     related_search = [rel.get_text() for rel in raw_related_search]
-    time.sleep(10)
+    time.sleep(2)
     driver.close()
     return rel_links ,related_search
     
@@ -82,7 +82,7 @@ def get_recommended_search(url, search_val):
     driver.get("http:\\www.google.com")
     search = driver.find_element_by_name('q')
     search.send_keys(search_val)
-    time.sleep(8)
+    time.sleep(6)
     soup = BeautifulSoup(driver.page_source, "lxml")
     recommendations = soup.select("div.sbl1 span")
     
@@ -162,7 +162,6 @@ def main(rel_link_search_dir="Related_Results.txt", rec_search_dir="Recommended_
         reco_words = get_recommended_search('http://www.google.com', search_val)
         write_to_file(rec_search_dir, reco_words)
         for rec in reco_words :
-            # print("{:::::::::::::::::",rec)
             new_reco_words = get_recommended_search('http://www.google.com', rec)
             write_to_file(rec_search_dir, new_reco_words)
 
