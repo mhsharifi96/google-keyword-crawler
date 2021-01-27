@@ -23,10 +23,10 @@ Second Author :Mohammad Hossein sharifi Email : mh.sh7676@gmail.com
 
 version :1.0.1
 '''
-import logging
-logging.basicConfig(level=logging.DEBUG)
-# For instance, show only warnings and above
-logging.getLogger('telethon').setLevel(level=logging.WARNING)
+# import logging
+# logging.basicConfig(level=logging.DEBUG)
+# # For instance, show only warnings and above
+# logging.getLogger('telethon').setLevel(level=logging.WARNING)
 
 #Starting Messing with this Version, Version 9 is the robust one
 
