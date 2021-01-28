@@ -45,7 +45,7 @@ async def main(event):
             link_preview=False
             )
     # sum(1 for _ in  re.finditer(regex_lsi, client_message, re.MULTILINE))>0
-    if len(client_message)>=3:
+    if len(client_message)>=3 and client_message != "/start":
         keyword = re.sub(regex_lsi,"",client_message)
         text = """کلمه کلیدی شما : {}""".format(keyword)
         message = await client.send_message(
